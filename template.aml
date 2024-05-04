@@ -1,0 +1,4 @@
+align [alignment: "center"]
+  border
+    @process-comp 
+      
