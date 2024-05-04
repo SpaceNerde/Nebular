@@ -7,6 +7,8 @@ use anathema::templates::Document;
 use anathema::backend::tui::TuiBackend;
 use anathema::widgets::components::Component;
 use anathema::state::*;
+use anathema::widgets::components::events::{KeyCode, KeyEvent, MouseEvent, MouseState, MouseButton};
+use anathema::widgets::Elements;
 
 #[derive(State)]
 struct RunningProcessState {
@@ -26,6 +28,24 @@ struct ProcessComponent;
 impl Component for ProcessComponent {
     type State = RunningProcessState;
     type Message = ();
+
+    fn on_mouse(
+        &mut self,
+        mouse: MouseEvent,
+        state: Option<&mut Self::State>,
+        elements: Elements<'_, '_>,
+    ) {
+        let state = state.unwrap();
+
+        let mut processes = &mut state.processes;
+
+        // Scrolling the list up and down
+        if let MouseState::Down(MouseButton::Left) = mouse.state {
+            processes.push_back("TEST".to_string());
+        }
+
+        processes.push_front("TEST".to_string());
+    }
 }
 
 fn main() {

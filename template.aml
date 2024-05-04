@@ -1,4 +1,5 @@
 align [alignment: "center"]
   border
-    @process-comp 
+    viewport
+      @process-comp 
       
