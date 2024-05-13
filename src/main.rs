@@ -18,7 +18,7 @@ struct RunningProcessState {
 impl RunningProcessState {
     pub fn new() -> Self {
         Self {
-            processes: List::empty()
+            processes: List::empty(),
         }
     }
 }
@@ -41,7 +41,8 @@ impl Component for ProcessComponent {
 
         // Scrolling the list up and down
         if let MouseState::ScrollDown = mouse.state {
-            processes.pop_front();
+            let val = processes.pop_front().unwrap();
+            processes.push_back(val);
         }
     }
 }
@@ -58,7 +59,7 @@ fn main() {
     let mut doc = Document::new(template);
 
     let mut backend = TuiBackend::builder()
-        .enable_alt_screen()
+        //.enable_alt_screen()
         .enable_mouse()
         .finish()
         .unwrap();
