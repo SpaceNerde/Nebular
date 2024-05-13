@@ -7,7 +7,7 @@ use anathema::templates::Document;
 use anathema::backend::tui::TuiBackend;
 use anathema::widgets::components::Component;
 use anathema::state::*;
-use anathema::widgets::components::events::{KeyCode, KeyEvent, MouseEvent, MouseState, MouseButton};
+use anathema::widgets::components::events::{KeyCode, KeyEvent, MouseEvent, MouseState, MouseButton, KeyState};
 use anathema::widgets::Elements;
 
 #[derive(State)]
@@ -28,7 +28,7 @@ struct ProcessComponent;
 impl Component for ProcessComponent {
     type State = RunningProcessState;
     type Message = ();
-
+    
     fn on_mouse(
         &mut self,
         mouse: MouseEvent,
@@ -40,11 +40,9 @@ impl Component for ProcessComponent {
         let mut processes = &mut state.processes;
 
         // Scrolling the list up and down
-        if let MouseState::Down(MouseButton::Left) = mouse.state {
-            processes.push_back("TEST".to_string());
+        if let MouseState::ScrollDown = mouse.state {
+            processes.pop_front();
         }
-
-        processes.push_front("TEST".to_string());
     }
 }
 
@@ -61,21 +59,24 @@ fn main() {
 
     let mut backend = TuiBackend::builder()
         .enable_alt_screen()
+        .enable_mouse()
         .finish()
         .unwrap();
 
     let mut running_process_state = RunningProcessState::new();
 
+    
     for (_, process) in sys.processes() {
         running_process_state.processes.push_front(process.name().to_string());
     }
+    
 
 
     let component_id = doc.add_component("process-comp", "
-vstack
-    for val in processes
-        text val
-");
+    vstack
+        for val in processes
+            text val
+    ");
 
     let mut runtime = Runtime::new(doc, backend).unwrap();
     
